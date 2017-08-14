@@ -5,10 +5,12 @@
  */
 
 import React from 'react';
-import Helmet from 'react-helmet';
+import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { Link } from 'react-router';
 
 import { makeSelectRepos, makeSelectLoading, makeSelectError } from 'containers/App/selectors';
 import H2 from 'components/H2';
@@ -43,12 +45,10 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 
     return (
       <article>
-        <Helmet
-          title="Home Page"
-          meta={[
-            { name: 'description', content: 'A React.js Boilerplate application homepage' },
-          ]}
-        />
+        <Helmet>
+          <title>Home Page</title>
+          <meta name="description" content="A React.js Boilerplate application homepage" />
+        </Helmet>
         <div>
           <CenteredSection>
             <H2>
@@ -63,19 +63,27 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
               <FormattedMessage {...messages.trymeHeader} />
             </H2>
             <Form onSubmit={this.props.onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.trymeMessage} />
-                <AtPrefix>
-                  <FormattedMessage {...messages.trymeAtPrefix} />
-                </AtPrefix>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="mxstbr"
-                  value={this.props.username}
-                  onChange={this.props.onChangeUsername}
+              <div>
+                <label htmlFor="username">
+                  <FormattedMessage {...messages.trymeMessage} />
+                  <AtPrefix>
+                    <FormattedMessage {...messages.trymeAtPrefix} />
+                  </AtPrefix>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="mxstbr"
+                    value={this.props.username}
+                    onChange={this.props.onChangeUsername}
+                  />
+                </label>
+                <FormattedMessage
+                  {...messages.userLink}
+                  values={{
+                    link: (<Link to={`/users/${this.props.username}`}>{this.props.username}</Link>),
+                  }}
                 />
-              </label>
+              </div>
             </Form>
             <ReposList {...reposListProps} />
           </Section>
@@ -86,18 +94,18 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 }
 
 HomePage.propTypes = {
-  loading: React.PropTypes.bool,
-  error: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.bool,
+  loading: PropTypes.bool,
+  error: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
   ]),
-  repos: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.bool,
+  repos: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool,
   ]),
-  onSubmitForm: React.PropTypes.func,
-  username: React.PropTypes.string,
-  onChangeUsername: React.PropTypes.func,
+  onSubmitForm: PropTypes.func,
+  username: PropTypes.string,
+  onChangeUsername: PropTypes.func,
 };
 
 export function mapDispatchToProps(dispatch) {

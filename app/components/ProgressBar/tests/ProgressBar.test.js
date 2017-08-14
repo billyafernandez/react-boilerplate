@@ -7,6 +7,7 @@ import Wrapper from '../Wrapper';
 import Percent from '../Percent';
 
 let clock = null;
+const sandbox = sinon.sandbox.create();
 
 describe('<ProgressBar />', () => {
   beforeEach(() => {
@@ -14,7 +15,7 @@ describe('<ProgressBar />', () => {
   });
 
   afterEach(() => {
-    clock = sinon.restore();
+    clock = sandbox.restore();
   });
 
   it('should initially render hidden progress bar', () => {
@@ -129,13 +130,23 @@ describe('<ProgressBar />', () => {
     ProgressBar.prototype.componentWillUnmount.restore();
   });
 
+  it('should set state.percent to 99 if percent is greater', () => {
+    const renderedComponent = mount( // eslint-disable-line
+      <ProgressBar percent={100} updateProgress={(noop) => noop} />
+    );
+    const inst = renderedComponent.instance();
+    inst.setState = jest.fn();
+    inst.increment();
+    expect(inst.setState).toHaveBeenCalledWith({ percent: 99 });
+  });
+
   describe('increment progress', () => {
     beforeEach(() => {
       clock = sinon.useFakeTimers();
     });
 
     afterEach(() => {
-      clock = sinon.restore();
+      clock = sandbox.restore();
     });
 
     it('should start incrementing progress if 0 <= percent < 100', () => {
